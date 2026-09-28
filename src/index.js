@@ -16,21 +16,24 @@ export default class RouletteGame {
   }
   play(playerColorName, betAmount) {
     if (!this.isValid(playerColorName, betAmount)) return { isError: true };
+
+    const isWin = false;
+    const computerColor = this.makeComputerColor();
+
     betAmount = Number(betAmount); //지수표현을 거른 후 숫자로 변환
-    let moneyChange = -1 * betAmount;
-    this.adjustMoney(moneyChange); //베팅 시 베팅 금액은 자금에서 차감된다.
+    this.money -= betAmount; //베팅 시 베팅 금액은 자금에서 차감된다.
     gameView.updateMoneyElement(this.money);
     gameView.updateResultElement('룰렛을 돌리는 중...');
-
     this.addRound();
-    let isWin = false;
-    const computerColor = this.makeComputerColor();
-    if (this.isSameColorNames(playerColorName, computerColor.name)) {
+
+    if (playerColorName === computerColor.name) {
       //룰렛 결과가 플레이어가 선택한 색상과 같으면 베팅 성공, 다르면 베팅 실패이다.
-      isWin = true;
-      moneyChange = this.calculateWinning(betAmount, computerColor.multiplier);
-      this.adjustMoney(moneyChange);
+      const isWin = true;
+      const winning = this.calculateWinning(betAmount, computerColor.multiplier);
+      this.money += winning;
     }
+
+    const moneyChange = isWin ? winning : betAmount;
     const resultMessage = this.makeResultMessage(computerColor.name, isWin, moneyChange);
 
     return {
@@ -59,15 +62,8 @@ export default class RouletteGame {
     }
     return true;
   }
-  adjustMoney(betAmount) {
-    this.money += betAmount;
-  }
   addRound() {
     this.round++;
-  }
-  isSameColorNames(colorName1, colorName2) {
-    if (colorName1 === colorName2) return true;
-    return false;
   }
   calculateWinning(betAmount, multiplier) {
     //베팅 성공: 베팅 금액 + (베팅 금액 × 배당)을 획득한다. (원금 회수 + 배당금)
@@ -87,7 +83,7 @@ export default class RouletteGame {
   makeResultMessage(colorName, isWin, moneyChange) {
     let resultMessage = `룰렛 결과: ${colorName}\n`;
     if (isWin) resultMessage += `베팅 성공! +`;
-    else resultMessage += `베팅 실패! `;
+    else resultMessage += `베팅 실패! -`;
     resultMessage += `${moneyChange.toLocaleString('ko-KR')}원`;
     return resultMessage;
   }
