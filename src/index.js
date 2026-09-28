@@ -173,6 +173,7 @@ const game = new RouletteGame();
 const gameView = new RouletteGameView();
 
 gameView.updateMoneyElement(game.money); //현재 자금은 10,000이 표시된다.
+gameView.disableGameButton(false); //베팅, 중단 버튼을 보인다.
 gameView.displayRestartButton(false); //다시 시작 버튼은 보이지 않는다.
 gameView.bindBetEvent(handleBet);
 gameView.bindStopEvent(handleStop);
@@ -199,6 +200,7 @@ function handleStop() {
 }
 function finishGame(result) {
   if (result.isGameOver) {
+    gameView.disableGameButton(true); //파산 시 베팅,중단 버튼을 숨긴다.
     gameView.appendResultElement('게임이 곧 종료됩니다.');
     setTimeout(() => {
       gameView.showEndScreen(result);
