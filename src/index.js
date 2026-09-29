@@ -81,6 +81,7 @@ export default class RouletteGame {
   }
   convertNumberToColor(number) {
     let accumulatedProbability = 0;
+
     for (const color of COLORS) {
       accumulatedProbability += color.probabilityFrom1To1000;
       if (number <= accumulatedProbability) {
@@ -90,6 +91,7 @@ export default class RouletteGame {
   }
   makeResultMessage(colorName, isWin, moneyChange) {
     let resultMessage = `룰렛 결과: ${colorName}\n`;
+
     if (isWin) resultMessage += `베팅 성공! +`;
     else resultMessage += `베팅 실패! -`;
     resultMessage += `${moneyChange.toLocaleString('ko-KR')}원`;
@@ -142,6 +144,7 @@ export class RouletteGameView {
   }
   appendResultElement(message) {
     const appendMessage = document.createElement('p');
+
     appendMessage.textContent = message;
     this.resultContent.append(appendMessage);
   }
@@ -155,10 +158,11 @@ export class RouletteGameView {
   }
   showEndScreen(gameResult) {
     const title = document.createElement('h2');
-    title.textContent = '게임 종료';
     const money = document.createElement('p');
-    money.textContent = `최종 자금: ${gameResult.money.toLocaleString('ko-KR')}원`;
     const round = document.createElement('p');
+
+    title.textContent = '게임 종료';
+    money.textContent = `최종 자금: ${gameResult.money.toLocaleString('ko-KR')}원`;
     round.textContent = `플레이한 라운드: ${gameResult.round}`;
 
     this.resultContent.replaceChildren(title, money, round);
@@ -214,6 +218,7 @@ function finishGame(result) {
     setTimeout(() => {
       gameView.showEndScreen(result);
     }, 2000);
+
     return;
   }
   gameView.showEndScreen(result);
