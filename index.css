@@ -1,0 +1,155 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 40px 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  background: #f4f5f7;
+  color: #222;
+}
+
+#app {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 32px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.info-box {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: #f8f9fb;
+  border-radius: 10px;
+}
+
+.info-box p {
+  margin: 0;
+}
+
+.color-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.color-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.yellow { --color: #f2b705; }
+.green { --color: #2e9e4f; }
+.blue { --color: #2f6fdb; }
+.purple { --color: #8a3ffc; }
+.red { --color: #e03131; }
+
+.color-chip.yellow,
+.color-chip.green,
+.color-chip.blue,
+.color-chip.purple,
+.color-chip.red {
+  background: var(--color);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+select,
+input {
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccd;
+  border-radius: 8px;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  flex: 1;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: #3b5bdb;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#stop-button {
+  background: #495057;
+}
+
+#restart-button {
+  width: 100%;
+  margin-top: 16px;
+  background: #2b8a3e;
+}
+
+button:disabled,
+#stop-button:disabled {
+  background: #ced4da;
+  color: #868e96;
+  cursor: not-allowed;
+}
+
+#result-box {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8f9fb;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#result-content p {
+  margin: 6px 0;
+}
+
+.result-color {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--color);
+}
+
+.result-win {
+  font-weight: 700;
+  color: #2b8a3e;
+}
+
+.result-lose {
+  font-weight: 700;
+  color: #e03131;
+}
+
+.result-notice {
+  color: #e8590c;
+}
+
+.result-title {
+  font-size: 18px;
+  font-weight: 700;
+}
