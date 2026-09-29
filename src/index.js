@@ -2,22 +2,23 @@ const INITIAL_MONEY = 10000; //게임 시작 시 플레이어는 초기 자금 1
 const INITIAL_ROUND = 0;
 const COLORS = [
   //확률을 백분율*10으로 저장
-  { name: 'YELLOW', probability: 525, multiplier: 1 },
-  { name: 'GREEN', probability: 250, multiplier: 3 },
-  { name: 'BLUE', probability: 150, multiplier: 5 },
-  { name: 'PURPLE', probability: 50, multiplier: 10 },
-  { name: 'RED', probability: 25, multiplier: 20 },
+  { name: 'YELLOW', probabilityFrom1To1000: 525, multiplier: 1 },
+  { name: 'GREEN', probabilityFrom1To1000: 250, multiplier: 3 },
+  { name: 'BLUE', probabilityFrom1To1000: 150, multiplier: 5 },
+  { name: 'PURPLE', probabilityFrom1To1000: 50, multiplier: 10 },
+  { name: 'RED', probabilityFrom1To1000: 25, multiplier: 20 },
 ];
 
 export default class RouletteGame {
   constructor() {
     this.money = INITIAL_MONEY;
     this.round = INITIAL_ROUND;
+    this.isWin = false; //승리 여부 저장
+    this.moneyChange = 0; //자금 변화량
   }
   play(playerColorName, betAmount) {
     if (!this.isValid(playerColorName, betAmount)) return { isError: true };
 
-    const isWin = false;
     const computerColor = this.makeComputerColor();
 
     betAmount = Number(betAmount); //지수표현을 거른 후 숫자로 변환
@@ -28,21 +29,18 @@ export default class RouletteGame {
 
     if (playerColorName === computerColor.name) {
       //룰렛 결과가 플레이어가 선택한 색상과 같으면 베팅 성공, 다르면 베팅 실패이다.
-      const isWin = true;
-      const winning = this.calculateWinning(betAmount, computerColor.multiplier);
-      this.money += winning;
+      this.isWin = true;
+      this.moneyChange = this.calculateWinning(betAmount, computerColor.multiplier);
+      this.money += this.moneyChange;
     }
-
-    const moneyChange = isWin ? winning : betAmount;
-    const resultMessage = this.makeResultMessage(computerColor.name, isWin, moneyChange);
 
     return {
       isError: false,
       money: this.money,
       round: this.round,
-      result: resultMessage,
-      moneyChange: moneyChange,
-      isWin: isWin,
+      result: this.makeResultMessage(computerColor.name, this.isWin, this.moneyChange),
+      moneyChange: this.moneyChange,
+      isWin: this.isWin,
       isGameOver: this.money <= 0,
     };
   }
@@ -76,8 +74,10 @@ export default class RouletteGame {
   convertNumberToColor(number) {
     let accumulatedProbability = 0;
     for (const color of COLORS) {
-      accumulatedProbability += color.probability;
-      if (number <= accumulatedProbability) return color;
+      accumulatedProbability += color.probabilityFrom1To1000;
+      if (number <= accumulatedProbability) {
+        return color;
+      }
     }
   }
   makeResultMessage(colorName, isWin, moneyChange) {
@@ -173,7 +173,7 @@ const game = new RouletteGame();
 const gameView = new RouletteGameView();
 
 gameView.updateMoneyElement(game.money); //현재 자금은 10,000이 표시된다.
-gameView.disableGameButton(false); //베팅, 중단 버튼을 보인다.
+gameView.disableGameButton(false); //베팅, 중단 버튼을 활성화한다.
 gameView.displayRestartButton(false); //다시 시작 버튼은 보이지 않는다.
 gameView.bindBetEvent(handleBet);
 gameView.bindStopEvent(handleStop);
