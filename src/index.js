@@ -14,37 +14,37 @@ export default class RouletteGame {
     this.money = INITIAL_MONEY;
     this.round = INITIAL_ROUND;
     this.isWin = false; //승리 여부 저장
+    this.betAmount = 0; //베팅금
     this.moneyChange = 0; //자금 변화량
+    this.computerColor = null;
   }
   play(playerColorName, betAmount) {
-    if (!this.isValid(playerColorName, betAmount)) return { isError: true };
+    if (!this.isValidInput(playerColorName, betAmount)) return false;
 
-    const computerColor = this.makeComputerColor();
-
-    betAmount = Number(betAmount); //지수표현을 거른 후 숫자로 변환
-    this.money -= betAmount; //베팅 시 베팅 금액은 자금에서 차감된다.
+    this.betAmount = Number(betAmount); //지수표현을 거른 후 숫자로 변환
+    this.money -= this.betAmount; //베팅 시 베팅 금액은 자금에서 차감된다.
+    this.moneyChange = this.betAmount; //자금 변화
+    this.isWin = false; //초기화
+    this.computerColor = this.makeComputerColor();
     gameView.updateMoneyElement(this.money);
     gameView.updateResultElement('룰렛을 돌리는 중...');
     this.addRound();
+    this.onGameWin(playerColorName); //승리판단
 
-    if (playerColorName === computerColor.name) {
-      //룰렛 결과가 플레이어가 선택한 색상과 같으면 베팅 성공, 다르면 베팅 실패이다.
-      this.isWin = true;
-      this.moneyChange = this.calculateWinning(betAmount, computerColor.multiplier);
-      this.money += this.moneyChange;
-    }
-
+    return true;
+  }
+  getResult() {
+    //결과값 반환
     return {
-      isError: false,
       money: this.money,
       round: this.round,
-      result: this.makeResultMessage(computerColor.name, this.isWin, this.moneyChange),
+      result: this.makeResultMessage(this.computerColor.name, this.isWin, this.moneyChange),
       moneyChange: this.moneyChange,
       isWin: this.isWin,
       isGameOver: this.money <= 0,
     };
   }
-  isValid(color, betAmount) {
+  isValidInput(color, betAmount) {
     //유효하지 않은 입력이 들어오면 alert로 에러 메시지를 표시한다.
     if (color === '') {
       alert('베팅할 색상을 선택해주세요.');
@@ -62,6 +62,14 @@ export default class RouletteGame {
   }
   addRound() {
     this.round++;
+  }
+  onGameWin(playerColorName) {
+    //룰렛 결과가 플레이어가 선택한 색상과 같으면 베팅 성공, 다르면 베팅 실패이다.
+    if (playerColorName === this.computerColor.name) {
+      this.isWin = true;
+      this.moneyChange = this.calculateWinning(this.betAmount, this.computerColor.multiplier);
+      this.money += this.moneyChange;
+    }
   }
   calculateWinning(betAmount, multiplier) {
     //베팅 성공: 베팅 금액 + (베팅 금액 × 배당)을 획득한다. (원금 회수 + 배당금)
@@ -182,9 +190,10 @@ gameView.bindRestartEvent(handleRestart);
 function handleBet() {
   //베팅을 진행하면 색상과 베팅 금액을 입력한다.
   const { playerColorName, betAmount } = gameView.getInput();
-  const gameResult = game.play(playerColorName, betAmount); //betAmount는 문자열로 입력됨
+  const isPlayed = game.play(playerColorName, betAmount); //betAmount는 문자열로 입력됨
+  const gameResult = game.getResult();
 
-  if (gameResult.isError) return; //유효하지않은 입력 시 중단
+  if (!isPlayed) return; //유효하지않은 입력 시 중단
   gameView.disableGameButton(true); //베팅 버튼과 중단 버튼은 비활성화된다.
   setTimeout(() => {
     gameView.updatePlayView(gameResult);
