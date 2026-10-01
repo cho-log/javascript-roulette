@@ -15,7 +15,7 @@ export default class RouletteGame {
     this.round = INITIAL_ROUND;
     this.isWin = false; //승리 여부 저장
     this.betAmount = 0; //베팅금
-    this.moneyChange = 0; //자금 변화량
+    this.winning = 0; //수익금
     this.computerColor = null;
   }
   play(playerColorName, betAmount) {
@@ -23,8 +23,7 @@ export default class RouletteGame {
 
     this.betAmount = Number(betAmount); //지수표현을 거른 후 숫자로 변환
     this.money -= this.betAmount; //베팅 시 베팅 금액은 자금에서 차감된다.
-    this.moneyChange = this.betAmount; //자금 변화
-    this.isWin = false; //초기화
+    this.winning = 0; //초기화
     this.computerColor = this.makeComputerColor();
     gameView.updateMoneyElement(this.money);
     gameView.updateResultElement('룰렛을 돌리는 중...');
@@ -38,8 +37,8 @@ export default class RouletteGame {
     return {
       money: this.money,
       round: this.round,
-      result: this.makeResultMessage(this.computerColor.name, this.isWin, this.moneyChange),
-      moneyChange: this.moneyChange,
+      result: this.makeResultMessage(this.isWin ? this.winning : this.betAmount),
+      //moneyChange: this.isWin ? this.winning : this.betAmount,
       isWin: this.isWin,
       isGameOver: this.money <= 0,
     };
@@ -65,12 +64,13 @@ export default class RouletteGame {
   }
   onGameWin(playerColorName) {
     //룰렛 결과가 플레이어가 선택한 색상과 같으면 베팅 성공, 다르면 베팅 실패이다.
-    if (playerColorName === this.computerColor.name) {
-      this.isWin = true;
-      this.moneyChange = this.calculateWinning(this.betAmount, this.computerColor.multiplier);
-      this.money += this.moneyChange;
-    }
+    this.isWin = playerColorName === this.computerColor.name;
+    if (!this.isWin) return;
+
+    this.winning = this.calculateWinning(this.betAmount, this.computerColor.multiplier);
+    this.money += this.winning;
   }
+
   calculateWinning(betAmount, multiplier) {
     //베팅 성공: 베팅 금액 + (베팅 금액 × 배당)을 획득한다. (원금 회수 + 배당금)
     return betAmount + betAmount * multiplier;
@@ -89,10 +89,10 @@ export default class RouletteGame {
       }
     }
   }
-  makeResultMessage(colorName, isWin, moneyChange) {
-    let resultMessage = `룰렛 결과: ${colorName}\n`;
+  makeResultMessage(moneyChange) {
+    let resultMessage = `룰렛 결과: ${this.computerColor.name}\n`;
 
-    if (isWin) resultMessage += `베팅 성공! +`;
+    if (this.isWin) resultMessage += `베팅 성공! +`;
     else resultMessage += `베팅 실패! -`;
     resultMessage += `${moneyChange.toLocaleString('ko-KR')}원`;
     return resultMessage;
@@ -227,5 +227,5 @@ function handleRestart() {
   game.resetGame();
   gameView.resetView();
   gameView.displayRestartButton(false); //다시 시작 버튼은 보이지 않는다.
-  gameView.disableGameButton(false); //재시작 시 베팅, 중단 버튼을 보인다.
+  gameView.disableGameButton(false); //다시 시작 시 베팅, 중단 버튼을 보인다.
 }
