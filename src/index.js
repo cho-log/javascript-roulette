@@ -195,9 +195,9 @@ function handleBet() {
   //베팅을 진행하면 색상과 베팅 금액을 입력한다.
   const { playerColorName, betAmount } = gameView.getInput();
   const isPlayed = game.play(playerColorName, betAmount); //betAmount는 문자열로 입력됨
-  const gameResult = game.getResult();
-
   if (!isPlayed) return; //유효하지않은 입력 시 중단
+
+  const gameResult = game.getResult();
   gameView.disableGameButton(true); //베팅 버튼과 중단 버튼은 비활성화된다.
   setTimeout(() => {
     gameView.updatePlayView(gameResult);
