@@ -23,7 +23,6 @@ export default class RouletteGame {
 
     this.betAmount = Number(betAmount); //지수표현을 거른 후 숫자로 변환
     this.money -= this.betAmount; //베팅 시 베팅 금액은 자금에서 차감된다.
-    this.winning = 0; //초기화
     this.computerColor = this.makeComputerColor();
     gameView.updateMoneyElement(this.money);
     gameView.updateResultElement('룰렛을 돌리는 중...');
