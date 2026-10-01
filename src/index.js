@@ -227,4 +227,5 @@ function handleRestart() {
   game.resetGame();
   gameView.resetView();
   gameView.displayRestartButton(false); //다시 시작 버튼은 보이지 않는다.
+  gameView.disableGameButton(false); //재시작 시 베팅, 중단 버튼을 보인다.
 }
