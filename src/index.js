@@ -65,9 +65,7 @@ export default class RouletteGame {
   onGameWin(playerColorName) {
     //룰렛 결과가 플레이어가 선택한 색상과 같으면 베팅 성공, 다르면 베팅 실패이다.
     this.isWin = playerColorName === this.computerColor.name;
-    if (!this.isWin) return;
-
-    this.winning = this.calculateWinning(this.betAmount, this.computerColor.multiplier);
+    this.winning = this.isWin ? this.calculateWinning(this.betAmount, this.computerColor.multiplier) : 0;
     this.money += this.winning;
   }
 
